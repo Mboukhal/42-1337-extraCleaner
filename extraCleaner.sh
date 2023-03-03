@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # remove all files above 60M
-
+cd ~/
 input="/tmp/tmp.clean"
 
 ls -lhaR ~/ 2>&1 | grep "M \|G " | grep  '[6-9][0-9]M \|[0-9]G \|[0-9][0-5][0-9]M ' > $input 2>&1
@@ -18,3 +18,5 @@ done < "$input"
 
 echo -e "\033[32mExtra clean done\033[0m"
 rm $input
+
+cd -
