@@ -1,4 +1,4 @@
-! /bin/bash
+#!/bin/bash
 
 # remove all files above 60M
 
