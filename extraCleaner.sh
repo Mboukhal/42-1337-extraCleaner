@@ -2,21 +2,32 @@
 
 # remove all files above 60M
 
-cd ~/
+SizeLimit="60"
 
-input="/tmp/tmp.clean"
+ROOT_PATH="$HOME"
 
-ls -lhaR ~/ 2>&1 | grep "M \|G " | grep  '[6-9][0-9]M \|[0-9]G \|[0-9][0-5][0-9]M ' > $input 2>&1
+cd $ROOT_PATH
 
-while read -r line
-do
-        x=`echo $line | awk {'print($9)'}`
-        r=`find ~/ -name $x 2>/dev/null`
-        rm "$r" 2> /dev/null
-        printf "\033[31m$r\tRemoved.\033[0m\n"
-done < "$input"
+InitialStorage=$(df -h "$ROOT_PATH" | grep "$ROOT_PATH" | awk '{print($4)}' | tr -d "Gi \Ki \Bi")
+printf "\n\033[34m\tCleaning resolt: [ ${InitialStorage}GB ] \033[0m\n\n"
+
+GrepQuery="[$(($SizeLimit/10))-9][0-9]M \|[0-9]G \|[0-9][0-5][0-9]M "
+
+ToRemove=($(ls -lhaR . 2>&1 | grep "M \|G " | grep "$GrepQuery" | awk {'print($9)'} 2>&1))
+
+for i in ${!ToRemove[@]}; do
+
+	RemoveIt=`find $ROOT_PATH -type f -name ${ToRemove[$i]} 2>/dev/null`
+	rm "$RemoveIt" 2> /dev/null
+	printf "\033[31mRemoved: \033[0m$RemoveIt\n"
+done
+
+NewStorage=$(df -h "$ROOT_PATH" | grep "Gi" | awk '{print($4)}' | tr -d "Gi")
+
+Calc=`echo "$NewStorage - $InitialStorage" | bc`
+
+printf "\n\033[32m\tCleaning about: [ ${Calc}GB ], Resolt: [ ${NewStorage}GB ]  \033[0m\n"
 
 printf "\033[32mExtra clean done\033[0m\n"
-rm $input
 
-cd -
+cd - > /dev/null
