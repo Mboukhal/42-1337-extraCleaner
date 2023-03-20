@@ -8,6 +8,8 @@ ROOT_PATH="$HOME"
 
 cd $ROOT_PATH
 
+rm -rf "/Users/$USER/Library/Caches/vscode-cpptools/ipch"
+
 InitialStorage=$(df -h "$ROOT_PATH" | grep "$ROOT_PATH" | awk '{print($4)}')
 printf "\n\033[31m\tTotal storage:\t\t[ ${InitialStorage} ] \033[0m\n\n"
 
